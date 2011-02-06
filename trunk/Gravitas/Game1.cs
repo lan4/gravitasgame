@@ -42,10 +42,10 @@ namespace Gravitas
             // if using Screens in your project.  If not, or if you don't know what it means,
             // just ignore the following line for now.
             // For more information on Screens see the Screens wiki article on FlatRedBall.com.
-            //Screens.ScreenManager.Start(typeof(Gravitas.Screens.TestScreen).FullName);
+            Screens.ScreenManager.Start(typeof(Gravitas.Screens.GameScreen).FullName);
 
 
-            SpriteManager.AddSprite("redball.bmp");
+            //SpriteManager.AddSprite("redball.bmp");
 
 
 
