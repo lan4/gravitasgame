@@ -30,6 +30,11 @@ namespace Gravitas
         private Sprite mVisibleRepresentation;
         private Circle mCollision;
 
+        public Circle Collision
+        {
+            get { return mCollision; }
+        }
+
         private double mMass;
 
         public double Mass
@@ -40,6 +45,11 @@ namespace Gravitas
         private Line mDirection;
 
         private Circle mBottom;
+
+        private Vector3 bottomPointer;
+        private Vector3 targetPointer;
+
+        public const float MAX_ACCELERATION = 40.0f;
 
         // Keep the ContentManager for easy access:
         string mContentManagerName;
@@ -77,6 +87,9 @@ namespace Gravitas
             // Here you can preload any content you will be using
             // like .scnx files or texture files.
 
+            bottomPointer = Vector3.Zero;
+            targetPointer = Vector3.Zero;
+
             if (addToManagers)
             {
                 AddToManagers(null);
@@ -100,10 +113,11 @@ namespace Gravitas
 
             mDirection = ShapeManager.AddLine();
             mDirection.AttachTo(this, false);
+            mDirection.RelativeRotationZ = (float)(3.0f * Math.PI) / 2.0f;
 
             mBottom = ShapeManager.AddCircle();
             mBottom.AttachTo(this, false);
-            mBottom.RelativePosition.Y = -1.0f;
+            mBottom.RelativePosition.X = -1.0f;
             mBottom.Radius = 0.1f;
         }
 
@@ -119,19 +133,18 @@ namespace Gravitas
         {
             if (InputManager.Xbox360GamePads[0].LeftStick.AsDPadDown(Xbox360GamePad.DPadDirection.Left))
             {
-                this.Velocity = new Vector3((float)(mDirection.AbsolutePoint1.X - mDirection.AbsolutePoint2.X) * 10.0f, 
-                                            (float)(mDirection.AbsolutePoint1.Y - mDirection.AbsolutePoint2.Y) * 10.0f, 
-                                            0.0f);
+                this.Velocity.X = /*this.Velocity.X +*/ (float)(mDirection.AbsolutePoint1.X - mDirection.AbsolutePoint2.X) * 3.0f;
+                this.Velocity.Y = /*this.Velocity.Y +*/ (float)(mDirection.AbsolutePoint1.Y - mDirection.AbsolutePoint2.Y) * 3.0f; 
+                                           
             }
             else if (InputManager.Xbox360GamePads[0].LeftStick.AsDPadDown(Xbox360GamePad.DPadDirection.Right))
             {
-                this.Velocity = new Vector3((float)(mDirection.AbsolutePoint2.X - mDirection.AbsolutePoint1.X) * 10.0f,
-                                            (float)(mDirection.AbsolutePoint2.Y - mDirection.AbsolutePoint1.Y) * 10.0f,
-                                            0.0f);
+                this.Velocity.X = /*this.Velocity.X +*/ (float)(mDirection.AbsolutePoint2.X - mDirection.AbsolutePoint1.X) * 3.0f;
+                this.Velocity.Y = /*this.Velocity.Y +*/ (float)(mDirection.AbsolutePoint2.Y - mDirection.AbsolutePoint1.Y) * 3.0f;
             }
             else
             {
-                this.Velocity = Vector3.Zero;
+                //this.Velocity = Vector3.Zero;
             }
 
             if (InputManager.Xbox360GamePads[0].RightTrigger.Position > 0.2)
@@ -146,6 +159,23 @@ namespace Gravitas
             {
                 this.RotationZVelocity = 0.0f;
             }
+        }
+
+        public void RotateToward(Body target)
+        {
+            
+            targetPointer.X = this.Position.X - target.Position.X;
+            targetPointer.Y = this.Position.Y - target.Position.Y;
+            /*
+            targetPointer.Normalize();
+            if (targetPointer.X < 0.0f)
+                this.RotationZ = (float)Math.Acos((double)targetPointer.X);
+            else
+                this.RotationZ = (float)Math.Asin((double)targetPointer.Y);
+            */
+            float rotation = (float)Math.Atan2(targetPointer.Y, targetPointer.X);
+
+            this.RotationZ = rotation;
         }
 
         public virtual void Destroy()

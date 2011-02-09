@@ -6,6 +6,8 @@ using FlatRedBall;
 using FlatRedBall.Graphics;
 using FlatRedBall.Math.Geometry;
 
+using Microsoft.Xna.Framework;
+
 
 // Be sure to replace:
 // 1.  The namespace
@@ -25,6 +27,11 @@ namespace Gravitas
         // private Circle mCollision;
         private Sprite mVisibleRepresentation;
         private Circle mCollision;
+
+        public Circle Collision
+        {
+            get { return mCollision; }
+        }
 
         private bool mIsStatic;
 
@@ -61,12 +68,13 @@ namespace Gravitas
         #region Methods
 
         // Constructor
-        public Body(string contentManagerName, double mass, bool isStatic)
+        public Body(string contentManagerName, double mass, bool isStatic, float x, float y)
         {
             // Set the ContentManagerName and call Initialize:
             mContentManagerName = contentManagerName;
             mMass = mass;
             mIsStatic = isStatic;
+            this.Position = new Vector3(x, y, 0.0f);
 
             // If you don't want to add to managers, make an overriding constructor
             Initialize(true);
@@ -97,6 +105,7 @@ namespace Gravitas
 
             mCollision = ShapeManager.AddCircle();
             mCollision.AttachTo(this, false);
+            mCollision.Radius = 4.0f;
         }
 
 

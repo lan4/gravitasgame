@@ -14,6 +14,8 @@ namespace Gravitas.Screens
         private List<Body> bodyList;
         private Player player1;
 
+        private const float GRAVITY_CONSTANT = 150.0f;
+
         #region Methods
 
         #region Constructor and Initialize
@@ -39,9 +41,6 @@ namespace Gravitas.Screens
 
             InitializeBodyList();
 
-            bodyList.ElementAt<Body>(0).Position = new Vector3(5.0f, 3.0f, 0.0f);
-
-
             // AddToManagers should be called LAST in this method:
             if (addToManagers)
             {
@@ -51,8 +50,8 @@ namespace Gravitas.Screens
 
         private void InitializeBodyList()
         {
-            bodyList.Add(new Body("global", 20.0f, true));
-            bodyList.Add(new Body("global", 40.0f, true));
+            bodyList.Add(new Body("global", 20.0f, true, 10.0f, 3.0f));
+            //bodyList.Add(new Body("global", 40.0f, true, -2.0f, -2.0f));
         }
 
         public override void AddToManagers()
@@ -70,17 +69,52 @@ namespace Gravitas.Screens
             base.Activity(firstTimeCalled);
 
             player1.Activity();
+            player1.RotateToward(FindClosestBody(player1.Position));
             Gravitation();
+            CheckCollisions();
         }
 
         private void Gravitation()
         {
+            Vector3 F = new Vector3(0, 0, 0);
             foreach (Body element in bodyList)
             {
-                player1.Acceleration = new Vector3(player1.Acceleration.X + (element.Position.X - player1.Position.X) * 5.0f,
-                                                   player1.Acceleration.Y + (element.Position.Y - player1.Position.Y) * 5.0f,
-                                                   0.0f);
+                Vector3 R = (element.Position - player1.Position);
+                R.Normalize();
+
+                float rSquared = Vector3.DistanceSquared(player1.Position, element.Position);
+
+                F += Vector3.Multiply(R, (float)(GRAVITY_CONSTANT * element.Mass * player1.Mass / rSquared));
             }
+            player1.Acceleration = Vector3.Divide(F, (float)player1.Mass);
+            
+        }
+
+        private void CheckCollisions()
+        {
+            foreach (Body element in bodyList)
+            {
+                player1.Collision.CollideAgainstBounce(element.Collision, 0.0f, (float)element.Mass, 0.0f);
+            }
+        }
+
+        public Body FindClosestBody(Vector3 position)
+        {
+            Body closest = bodyList.ElementAt<Body>(0);
+            float dist_closest = Vector3.DistanceSquared(position, closest.Position);
+            float dist_current;
+
+            foreach (Body element in bodyList)
+            {
+                dist_current = Vector3.DistanceSquared(position, element.Position);
+                if (dist_current < dist_closest)
+                {
+                    closest = element;
+                    dist_closest = dist_current;
+                }
+            }
+
+            return closest;
         }
 
         public override void Destroy()
