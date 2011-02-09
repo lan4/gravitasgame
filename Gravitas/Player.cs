@@ -131,13 +131,15 @@ namespace Gravitas
 
         private void HandleInput()
         {
-            if (InputManager.Xbox360GamePads[0].LeftStick.AsDPadDown(Xbox360GamePad.DPadDirection.Left))
+            if (InputManager.Xbox360GamePads[0].LeftStick.AsDPadDown(Xbox360GamePad.DPadDirection.Left) ||
+                InputManager.Keyboard.KeyDown(Microsoft.Xna.Framework.Input.Keys.A))
             {
                 this.Velocity.X = /*this.Velocity.X +*/ (float)(mDirection.AbsolutePoint1.X - mDirection.AbsolutePoint2.X) * 3.0f;
                 this.Velocity.Y = /*this.Velocity.Y +*/ (float)(mDirection.AbsolutePoint1.Y - mDirection.AbsolutePoint2.Y) * 3.0f; 
                                            
             }
-            else if (InputManager.Xbox360GamePads[0].LeftStick.AsDPadDown(Xbox360GamePad.DPadDirection.Right))
+            else if (InputManager.Xbox360GamePads[0].LeftStick.AsDPadDown(Xbox360GamePad.DPadDirection.Right) ||
+                     InputManager.Keyboard.KeyDown(Microsoft.Xna.Framework.Input.Keys.D))
             {
                 this.Velocity.X = /*this.Velocity.X +*/ (float)(mDirection.AbsolutePoint2.X - mDirection.AbsolutePoint1.X) * 3.0f;
                 this.Velocity.Y = /*this.Velocity.Y +*/ (float)(mDirection.AbsolutePoint2.Y - mDirection.AbsolutePoint1.Y) * 3.0f;
