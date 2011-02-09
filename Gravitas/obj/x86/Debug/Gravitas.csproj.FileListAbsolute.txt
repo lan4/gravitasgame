@@ -7,3 +7,12 @@ C:\Users\Alex\Documents\Gravitas\Gravitas\obj\x86\Debug\ResolveAssemblyReference
 C:\Users\Alex\Documents\Gravitas\Gravitas\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
 C:\Users\Alex\Documents\Gravitas\Gravitas\obj\x86\Debug\Gravitas.exe
 C:\Users\Alex\Documents\Gravitas\Gravitas\obj\x86\Debug\Gravitas.pdb
+C:\Users\Nathan\Desktop\Gravitas\Gravitas\bin\x86\Debug\redball.BMP
+C:\Users\Nathan\Desktop\Gravitas\Gravitas\bin\x86\Debug\Gravitas.exe
+C:\Users\Nathan\Desktop\Gravitas\Gravitas\bin\x86\Debug\Gravitas.pdb
+C:\Users\Nathan\Desktop\Gravitas\Gravitas\bin\x86\Debug\FlatRedBall.dll
+C:\Users\Nathan\Desktop\Gravitas\Gravitas\bin\x86\Debug\FlatRedBall.xml
+C:\Users\Nathan\Desktop\Gravitas\Gravitas\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Nathan\Desktop\Gravitas\Gravitas\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Users\Nathan\Desktop\Gravitas\Gravitas\obj\x86\Debug\Gravitas.exe
+C:\Users\Nathan\Desktop\Gravitas\Gravitas\obj\x86\Debug\Gravitas.pdb
