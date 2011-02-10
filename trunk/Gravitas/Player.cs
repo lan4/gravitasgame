@@ -46,6 +46,19 @@ namespace Gravitas
 
         private Circle mBottom;
 
+        public Circle Bottom
+        {
+            get { return mBottom; }
+        }
+
+        private bool mIsOnGround;
+
+        public bool IsOnGround
+        {
+            get { return mIsOnGround; }
+            set { mIsOnGround = value; }
+        }
+
         private Vector3 bottomPointer;
         private Vector3 targetPointer;
 
@@ -119,6 +132,9 @@ namespace Gravitas
             mBottom.AttachTo(this, false);
             mBottom.RelativePosition.X = -1.0f;
             mBottom.Radius = 0.1f;
+
+            SpriteManager.Camera.AttachTo(this, false);
+            SpriteManager.Camera.RelativePosition.Z = 30.0f;
         }
 
 
@@ -131,35 +147,47 @@ namespace Gravitas
 
         private void HandleInput()
         {
-            if (InputManager.Xbox360GamePads[0].LeftStick.AsDPadDown(Xbox360GamePad.DPadDirection.Left) ||
-                InputManager.Keyboard.KeyDown(Microsoft.Xna.Framework.Input.Keys.A))
+            if (mIsOnGround)
             {
-                this.Velocity.X = /*this.Velocity.X +*/ (float)(mDirection.AbsolutePoint1.X - mDirection.AbsolutePoint2.X) * 3.0f;
-                this.Velocity.Y = /*this.Velocity.Y +*/ (float)(mDirection.AbsolutePoint1.Y - mDirection.AbsolutePoint2.Y) * 3.0f; 
-                                           
-            }
-            else if (InputManager.Xbox360GamePads[0].LeftStick.AsDPadDown(Xbox360GamePad.DPadDirection.Right) ||
-                     InputManager.Keyboard.KeyDown(Microsoft.Xna.Framework.Input.Keys.D))
-            {
-                this.Velocity.X = /*this.Velocity.X +*/ (float)(mDirection.AbsolutePoint2.X - mDirection.AbsolutePoint1.X) * 3.0f;
-                this.Velocity.Y = /*this.Velocity.Y +*/ (float)(mDirection.AbsolutePoint2.Y - mDirection.AbsolutePoint1.Y) * 3.0f;
-            }
-            else
-            {
-                //this.Velocity = Vector3.Zero;
+                if (InputManager.Xbox360GamePads[0].LeftStick.AsDPadDown(Xbox360GamePad.DPadDirection.Left) ||
+                    InputManager.Keyboard.KeyDown(Microsoft.Xna.Framework.Input.Keys.A))
+                {
+                    this.Velocity.X = (float)(mDirection.AbsolutePoint1.X - mDirection.AbsolutePoint2.X) * 3.0f;
+                    this.Velocity.Y = (float)(mDirection.AbsolutePoint1.Y - mDirection.AbsolutePoint2.Y) * 3.0f;
+
+                }
+                else if (InputManager.Xbox360GamePads[0].LeftStick.AsDPadDown(Xbox360GamePad.DPadDirection.Right) ||
+                         InputManager.Keyboard.KeyDown(Microsoft.Xna.Framework.Input.Keys.D))
+                {
+                    this.Velocity.X = (float)(mDirection.AbsolutePoint2.X - mDirection.AbsolutePoint1.X) * 3.0f;
+                    this.Velocity.Y = (float)(mDirection.AbsolutePoint2.Y - mDirection.AbsolutePoint1.Y) * 3.0f;
+                }
+                else
+                {
+                    //this.Velocity = Vector3.Zero;
+                }
+
+                if (InputManager.Xbox360GamePads[0].ButtonPushed(Xbox360GamePad.Button.A) ||
+                    InputManager.Keyboard.KeyPushed(Microsoft.Xna.Framework.Input.Keys.Space))
+                {
+                    this.Velocity.X += (float)(this.Position.X - mBottom.Position.X) * 20.0f;
+                    this.Velocity.Y += (float)(this.Position.Y - mBottom.Position.Y) * 20.0f;
+                }
             }
 
-            if (InputManager.Xbox360GamePads[0].RightTrigger.Position > 0.2)
+            if (InputManager.Xbox360GamePads[0].ButtonDown(Xbox360GamePad.Button.LeftTrigger) ||
+                InputManager.Keyboard.KeyDown(Microsoft.Xna.Framework.Input.Keys.Up))
             {
-                this.RotationZVelocity = 2.0f;
+                SpriteManager.Camera.RelativeVelocity.Z = -3.0f;
             }
-            else if (InputManager.Xbox360GamePads[0].LeftTrigger.Position > 0.2)
+            else if (InputManager.Xbox360GamePads[0].ButtonDown(Xbox360GamePad.Button.RightTrigger) ||
+                     InputManager.Keyboard.KeyDown(Microsoft.Xna.Framework.Input.Keys.Down))
             {
-                this.RotationZVelocity = -2.0f;
+                SpriteManager.Camera.RelativeVelocity.Z = 3.0f;
             }
             else
             {
-                this.RotationZVelocity = 0.0f;
+                SpriteManager.Camera.RelativeVelocity.Z = 0.0f;
             }
         }
 
