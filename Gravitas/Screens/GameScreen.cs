@@ -76,7 +76,11 @@ namespace Gravitas.Screens
 
         private void Gravitation()
         {
-            Vector3 F = new Vector3(0, 0, 0);
+            Vector3 F;
+            if (player1.IsJumping)
+                F = player1.Acceleration;
+            else
+                F = new Vector3(0, 0, 0);
 
             foreach (Body element in bodyList)
             {

@@ -62,6 +62,14 @@ namespace Gravitas
         private Vector3 bottomPointer;
         private Vector3 targetPointer;
 
+        private bool mIsJumping = false;
+
+        public bool IsJumping
+        {
+            get { return mIsJumping; }
+            set { mIsJumping = value; }
+        }
+
         public const float MAX_ACCELERATION = 40.0f;
 
         // Keep the ContentManager for easy access:
@@ -149,6 +157,7 @@ namespace Gravitas
         {
             if (mIsOnGround)
             {
+                
                 if (InputManager.Xbox360GamePads[0].LeftStick.AsDPadDown(Xbox360GamePad.DPadDirection.Left) ||
                     InputManager.Keyboard.KeyDown(Microsoft.Xna.Framework.Input.Keys.A))
                 {
@@ -164,14 +173,19 @@ namespace Gravitas
                 }
                 else
                 {
-                    //this.Velocity = Vector3.Zero;
+                    this.Velocity = Vector3.Zero;
                 }
 
                 if (InputManager.Xbox360GamePads[0].ButtonPushed(Xbox360GamePad.Button.A) ||
                     InputManager.Keyboard.KeyPushed(Microsoft.Xna.Framework.Input.Keys.Space))
                 {
-                    this.Velocity.X += (float)(this.Position.X - mBottom.Position.X) * 20.0f;
-                    this.Velocity.Y += (float)(this.Position.Y - mBottom.Position.Y) * 20.0f;
+                    this.Acceleration.X += (float)(this.Position.X - mBottom.Position.X) * 1000.0f;
+                    this.Acceleration.Y += (float)(this.Position.Y - mBottom.Position.Y) * 1000.0f;
+                    mIsJumping = true;
+                }
+                else
+                {
+                    mIsJumping = false;
                 }
             }
 
