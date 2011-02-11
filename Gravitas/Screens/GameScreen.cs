@@ -14,7 +14,7 @@ namespace Gravitas.Screens
         private List<Body> bodyList;
         private Player player1;
 
-        private const float GRAVITY_CONSTANT = 100.0f;
+        private const float GRAVITY_CONSTANT = 25.0f;
 
         #region Methods
 
@@ -76,11 +76,11 @@ namespace Gravitas.Screens
 
         private void Gravitation()
         {
-            Vector3 F;
-            if (player1.IsJumping)
-                F = player1.Acceleration;
-            else
-                F = new Vector3(0, 0, 0);
+            Vector3 F = Vector3.Zero;
+            //if (player1.IsJumping)
+            //    F = player1.Acceleration;
+            //else
+            //    F = new Vector3(0, 0, 0);
 
             foreach (Body element in bodyList)
             {
@@ -103,6 +103,7 @@ namespace Gravitas.Screens
             foreach (Body element in bodyList)
             {
                 player1.Collision.CollideAgainstBounce(element.Collision, 0.0f, (float)element.Mass, 0.0f);
+
                 if (player1.Bottom.CollideAgainst(element.Collision))
                 {
                     player1.IsOnGround = true;
