@@ -30,6 +30,9 @@ namespace Gravitas
         private Sprite mVisibleRepresentation;
         private Circle mCollision;
 
+        private Text velocityText;
+        private Text accelerationText;
+
         public Circle Collision
         {
             get { return mCollision; }
@@ -43,6 +46,8 @@ namespace Gravitas
         }
 
         private Line mDirection;
+        private Line mVelocityVector;
+        private Line mAccelerationVector;
 
         private Circle mBottom;
 
@@ -71,6 +76,10 @@ namespace Gravitas
         }
 
         public const float MAX_ACCELERATION = 40.0f;
+        public const float FRICTION_CONSTANT = -30.0f;
+
+        private Vector3 mTangentialVelocity;
+        private Vector3 mPerpendicularVelocity;
 
         // Keep the ContentManager for easy access:
         string mContentManagerName;
@@ -136,6 +145,12 @@ namespace Gravitas
             mDirection.AttachTo(this, false);
             mDirection.RelativeRotationZ = (float)(3.0f * Math.PI) / 2.0f;
 
+            mVelocityVector = ShapeManager.AddLine();
+            mVelocityVector.Color = Microsoft.Xna.Framework.Graphics.Color.Aquamarine;
+
+            mAccelerationVector = ShapeManager.AddLine();
+            mAccelerationVector.Color = Microsoft.Xna.Framework.Graphics.Color.Goldenrod;
+
             mBottom = ShapeManager.AddCircle();
             mBottom.AttachTo(this, false);
             mBottom.RelativePosition.X = -1.0f;
@@ -143,6 +158,18 @@ namespace Gravitas
 
             SpriteManager.Camera.AttachTo(this, false);
             SpriteManager.Camera.RelativePosition.Z = 30.0f;
+
+            //velocityText = TextManager.AddText("Velocity: " + this.Velocity);
+            //velocityText.AttachTo(SpriteManager.Camera, false);
+            //velocityText.RelativePosition.X = 5.0f;
+            //velocityText.RelativePosition.Y = 5.0f;
+            //velocityText.RelativePosition.Z = -30.0f;
+            
+            //accelerationText = TextManager.AddText("Acceleration: " + this.Acceleration);
+            //accelerationText.AttachTo(SpriteManager.Camera, false);
+            //accelerationText.RelativePosition.X = 5.0f;
+            //accelerationText.RelativePosition.Y = 4.0f;
+            //accelerationText.RelativePosition.Z = -30.0f;
         }
 
 
@@ -150,17 +177,49 @@ namespace Gravitas
         public virtual void Activity()
         {
             // This code should do things like set Animations, respond to input, and so on.
+            //DisplayHUD();
+            DisplayVector();
+
             HandleInput();
+
+            if (mIsOnGround)
+            {
+                ApplyFriction();
+            }
         }
+
+        private void DisplayVector()
+        {
+            mVelocityVector.RelativePoint1.X = this.Position.X;
+            mVelocityVector.RelativePoint1.Y = this.Position.Y;
+
+            mVelocityVector.RelativePoint2.X = (this.Position.X - this.Velocity.X);
+            mVelocityVector.RelativePoint2.Y = (this.Position.Y - this.Velocity.Y);
+
+            mAccelerationVector.RelativePoint1.X = this.Position.X;
+            mAccelerationVector.RelativePoint1.Y = this.Position.Y;
+
+            mAccelerationVector.RelativePoint2.X = (this.Position.X - this.Acceleration.X);
+            mAccelerationVector.RelativePoint2.Y = (this.Position.Y - this.Acceleration.Y);
+            
+        }
+
+        //private void DisplayHUD()
+        //{
+        //    velocityText.DisplayText = "Velocity: " + this.Velocity;
+        //    accelerationText.DisplayText = "Acceleration: " + this.Acceleration;
+        //}
 
         private void HandleInput()
         {
             if (mIsOnGround)
             {
-                
                 if (InputManager.Xbox360GamePads[0].LeftStick.AsDPadDown(Xbox360GamePad.DPadDirection.Left) ||
                     InputManager.Keyboard.KeyDown(Microsoft.Xna.Framework.Input.Keys.A))
                 {
+                    // THIS BE VECTOR SUBTRACTION
+                    //mTangentialVelocity.X = (float)(mDirection.AbsolutePoint1.X - mDirection.AbsolutePoint2.X) * 3.0f;
+                    //mTangentialVelocity.Y = (float)(mDirection.AbsolutePoint1.Y - mDirection.AbsolutePoint2.Y) * 3.0f;
                     this.Velocity.X = (float)(mDirection.AbsolutePoint1.X - mDirection.AbsolutePoint2.X) * 3.0f;
                     this.Velocity.Y = (float)(mDirection.AbsolutePoint1.Y - mDirection.AbsolutePoint2.Y) * 3.0f;
 
@@ -168,25 +227,41 @@ namespace Gravitas
                 else if (InputManager.Xbox360GamePads[0].LeftStick.AsDPadDown(Xbox360GamePad.DPadDirection.Right) ||
                          InputManager.Keyboard.KeyDown(Microsoft.Xna.Framework.Input.Keys.D))
                 {
+                    // THIS BE VECTOR SUBTRACTION
+                    //mTangentialVelocity.X = (float)(mDirection.AbsolutePoint2.X - mDirection.AbsolutePoint1.X) * 3.0f;
+                    //mTangentialVelocity.Y = (float)(mDirection.AbsolutePoint2.Y - mDirection.AbsolutePoint1.Y) * 3.0f;
                     this.Velocity.X = (float)(mDirection.AbsolutePoint2.X - mDirection.AbsolutePoint1.X) * 3.0f;
                     this.Velocity.Y = (float)(mDirection.AbsolutePoint2.Y - mDirection.AbsolutePoint1.Y) * 3.0f;
+
                 }
                 else
                 {
-                    this.Velocity = Vector3.Zero;
+                    mTangentialVelocity = Vector3.Zero;
                 }
 
                 if (InputManager.Xbox360GamePads[0].ButtonPushed(Xbox360GamePad.Button.A) ||
                     InputManager.Keyboard.KeyPushed(Microsoft.Xna.Framework.Input.Keys.Space))
                 {
-                    this.Acceleration.X += (float)(this.Position.X - mBottom.Position.X) * 1000.0f;
-                    this.Acceleration.Y += (float)(this.Position.Y - mBottom.Position.Y) * 1000.0f;
+                    //Vector3 unitVector = Vector3.Zero;
+                    //unitVector = Vector3.Normalize(this.Acceleration);
+
+                    //mPerpendicularVelocity = Vector3.Multiply(unitVector, -10.0f);
+
+                    //this.mPerpendicularVelocity.X = (this.Position.X - mBottom.Position.X) * 10.0f;
+                    //this.mPerpendicularVelocity.Y = (this.Position.Y - mBottom.Position.Y) * 10.0f;
+                    this.Velocity.X += (float)(this.Position.X - mBottom.Position.X) * 10.0f;
+                    this.Velocity.Y += (float)(this.Position.Y - mBottom.Position.Y) * 10.0f;
                     mIsJumping = true;
                 }
                 else
                 {
+                    mPerpendicularVelocity = Vector3.Zero;
                     mIsJumping = false;
                 }
+
+                //this.Velocity.X = (mTangentialVelocity.X + mPerpendicularVelocity.X);
+                //this.Velocity.Y = (mTangentialVelocity.Y + mPerpendicularVelocity.Y);
+                //this.Velocity.Z = 0.00000000000000000001f;
             }
 
             if (InputManager.Xbox360GamePads[0].ButtonDown(Xbox360GamePad.Button.LeftTrigger) ||
@@ -205,9 +280,19 @@ namespace Gravitas
             }
         }
 
+        private void ApplyFriction()
+        {
+            Vector3 unitVector = Vector3.Zero;
+
+            unitVector = Vector3.Normalize(this.Velocity);
+
+            this.Acceleration += Vector3.Multiply(unitVector, FRICTION_CONSTANT);
+        }
+
         public void RotateToward(Body target)
         {
-            
+            targetPointer = Vector3.Zero;
+
             targetPointer.X = this.Position.X - target.Position.X;
             targetPointer.Y = this.Position.Y - target.Position.Y;
             /*

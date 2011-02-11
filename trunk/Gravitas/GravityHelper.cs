@@ -29,7 +29,6 @@ namespace Gravitas
         public Vector3 calcGravity(Body body, Player character)
         {
             float radius;
-            double g;
 
             //Calculates unit vector with the direction facing the planet.
             Vector3 unitVector = (body.Position - character.Position);
@@ -48,7 +47,7 @@ namespace Gravitas
 
             //Calculates the gravity for the Player in regards to the object.
             //Distance plays a big part.
-            return Vector3.Multiply(unitVector, (float)(G * body.Mass/ radius));
+            return Vector3.Multiply(unitVector, (float)(G * body.Mass / radius));
         }
 
      }
