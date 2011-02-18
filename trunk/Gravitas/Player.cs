@@ -33,6 +33,10 @@ namespace Gravitas
         private Text velocityText;
         private Text accelerationText;
 
+        private double mStartTime;
+
+        private const double JUMP_TIME = 0.1f;
+
         public Circle Collision
         {
             get { return mCollision; }
@@ -48,6 +52,13 @@ namespace Gravitas
         private Line mDirection;
         private Line mVelocityVector;
         private Line mAccelerationVector;
+
+        private bool mBottomDisabled;
+
+        public bool BottomDisabled
+        {
+            get { return mBottomDisabled; }
+        }
 
         private Circle mBottom;
 
@@ -182,10 +193,15 @@ namespace Gravitas
 
             HandleInput();
 
-            if (mIsOnGround)
+            if (mStartTime - TimeManager.CurrentTime >= JUMP_TIME && mBottomDisabled)
             {
-                ApplyFriction();
+                mBottomDisabled = false; 
             }
+
+            //if (mIsOnGround)
+            //{
+            //    ApplyFriction();
+            //}
         }
 
         private void DisplayVector()
@@ -212,56 +228,61 @@ namespace Gravitas
 
         private void HandleInput()
         {
+            //DOES ALL OF THIS ONLY IF YOU'RE ON THE GROUND, ALEX!
             if (mIsOnGround)
             {
                 if (InputManager.Xbox360GamePads[0].LeftStick.AsDPadDown(Xbox360GamePad.DPadDirection.Left) ||
                     InputManager.Keyboard.KeyDown(Microsoft.Xna.Framework.Input.Keys.A))
                 {
-                    // THIS BE VECTOR SUBTRACTION
-                    //mTangentialVelocity.X = (float)(mDirection.AbsolutePoint1.X - mDirection.AbsolutePoint2.X) * 3.0f;
-                    //mTangentialVelocity.Y = (float)(mDirection.AbsolutePoint1.Y - mDirection.AbsolutePoint2.Y) * 3.0f;
-                    this.Velocity.X = (float)(mDirection.AbsolutePoint1.X - mDirection.AbsolutePoint2.X) * 3.0f;
-                    this.Velocity.Y = (float)(mDirection.AbsolutePoint1.Y - mDirection.AbsolutePoint2.Y) * 3.0f;
+                    // Calculates the Tangential Velocity while moving left.
+                    mTangentialVelocity.X = (float)(mDirection.AbsolutePoint1.X - mDirection.AbsolutePoint2.X) * 3.0f;
+                    mTangentialVelocity.Y = (float)(mDirection.AbsolutePoint1.Y - mDirection.AbsolutePoint2.Y) * 3.0f;
+                    //this.Velocity.X = (float)(mDirection.AbsolutePoint1.X - mDirection.AbsolutePoint2.X) * 3.0f;
+                    //this.Velocity.Y = (float)(mDirection.AbsolutePoint1.Y - mDirection.AbsolutePoint2.Y) * 3.0f;
 
                 }
                 else if (InputManager.Xbox360GamePads[0].LeftStick.AsDPadDown(Xbox360GamePad.DPadDirection.Right) ||
                          InputManager.Keyboard.KeyDown(Microsoft.Xna.Framework.Input.Keys.D))
                 {
-                    // THIS BE VECTOR SUBTRACTION
-                    //mTangentialVelocity.X = (float)(mDirection.AbsolutePoint2.X - mDirection.AbsolutePoint1.X) * 3.0f;
-                    //mTangentialVelocity.Y = (float)(mDirection.AbsolutePoint2.Y - mDirection.AbsolutePoint1.Y) * 3.0f;
-                    this.Velocity.X = (float)(mDirection.AbsolutePoint2.X - mDirection.AbsolutePoint1.X) * 3.0f;
-                    this.Velocity.Y = (float)(mDirection.AbsolutePoint2.Y - mDirection.AbsolutePoint1.Y) * 3.0f;
+                    // Calculates the Tangential Velocity while moving left.
+                    mTangentialVelocity.X = (float)(mDirection.AbsolutePoint2.X - mDirection.AbsolutePoint1.X) * 3.0f;
+                    mTangentialVelocity.Y = (float)(mDirection.AbsolutePoint2.Y - mDirection.AbsolutePoint1.Y) * 3.0f;
+                    //this.Velocity.X = (float)(mDirection.AbsolutePoint2.X - mDirection.AbsolutePoint1.X) * 3.0f;
+                    //this.Velocity.Y = (float)(mDirection.AbsolutePoint2.Y - mDirection.AbsolutePoint1.Y) * 3.0f;
 
                 }
                 else
                 {
+                    // Sets tangential velocity to zero when not moving.
                     mTangentialVelocity = Vector3.Zero;
                 }
 
                 if (InputManager.Xbox360GamePads[0].ButtonPushed(Xbox360GamePad.Button.A) ||
                     InputManager.Keyboard.KeyPushed(Microsoft.Xna.Framework.Input.Keys.Space))
                 {
-                    //Vector3 unitVector = Vector3.Zero;
-                    //unitVector = Vector3.Normalize(this.Acceleration);
+                    Vector3 unitVector = Vector3.Zero;
+                    unitVector = Vector3.Normalize(this.Acceleration);
 
-                    //mPerpendicularVelocity = Vector3.Multiply(unitVector, -10.0f);
+                    mIsOnGround = false;
+
+                    mStartTime = TimeManager.CurrentTime;
+                    mBottomDisabled = true;
+
+                    mPerpendicularVelocity = Vector3.Multiply(unitVector, 100000.0f);
 
                     //this.mPerpendicularVelocity.X = (this.Position.X - mBottom.Position.X) * 10.0f;
                     //this.mPerpendicularVelocity.Y = (this.Position.Y - mBottom.Position.Y) * 10.0f;
-                    this.Velocity.X += (float)(this.Position.X - mBottom.Position.X) * 10.0f;
-                    this.Velocity.Y += (float)(this.Position.Y - mBottom.Position.Y) * 10.0f;
-                    mIsJumping = true;
-                }
-                else
-                {
-                    mPerpendicularVelocity = Vector3.Zero;
-                    mIsJumping = false;
+                    //this.Velocity.X += (float)(this.Position.X - mBottom.Position.X) * 10.0f;
+                    //this.Velocity.Y += (float)(this.Position.Y - mBottom.Position.Y) * 10.0f;
+                    //mIsJumping = true;
                 }
 
-                //this.Velocity.X = (mTangentialVelocity.X + mPerpendicularVelocity.X);
-                //this.Velocity.Y = (mTangentialVelocity.Y + mPerpendicularVelocity.Y);
-                //this.Velocity.Z = 0.00000000000000000001f;
+
+                //float vX = (mTangentialVelocity.X + mPerpendicularVelocity.X);
+                //float vY = (mTangentialVelocity.Y + mPerpendicularVelocity.Y);
+
+                this.Velocity.X = (mTangentialVelocity.X + mPerpendicularVelocity.X);
+                this.Velocity.Y = (mTangentialVelocity.Y + mPerpendicularVelocity.Y);
             }
 
             if (InputManager.Xbox360GamePads[0].ButtonDown(Xbox360GamePad.Button.LeftTrigger) ||
@@ -284,7 +305,10 @@ namespace Gravitas
         {
             Vector3 unitVector = Vector3.Zero;
 
-            unitVector = Vector3.Normalize(this.Velocity);
+            if (this.mTangentialVelocity != Vector3.Zero)
+            {
+                unitVector = Vector3.Normalize(this.mTangentialVelocity);
+            }
 
             this.Acceleration += Vector3.Multiply(unitVector, FRICTION_CONSTANT);
         }

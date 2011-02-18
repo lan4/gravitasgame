@@ -104,7 +104,7 @@ namespace Gravitas.Screens
             {
                 player1.Collision.CollideAgainstBounce(element.Collision, 0.0f, (float)element.Mass, 0.0f);
 
-                if (player1.Bottom.CollideAgainst(element.Collision))
+                if (player1.Bottom.CollideAgainst(element.Collision) && !player1.BottomDisabled)
                 {
                     player1.IsOnGround = true;
                 }
