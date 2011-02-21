@@ -313,7 +313,7 @@ namespace Gravitas
             this.Acceleration += Vector3.Multiply(unitVector, FRICTION_CONSTANT);
         }
 
-        public void RotateToward(Body target)
+        public void RotateToward(Planet target)
         {
             targetPointer = Vector3.Zero;
 

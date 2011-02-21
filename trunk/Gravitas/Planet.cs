@@ -17,7 +17,7 @@ using Microsoft.Xna.Framework;
 
 namespace Gravitas
 {
-    public class Body : PositionedObject
+    public class Planet : PositionedObject
     {
         #region Fields
 
@@ -68,7 +68,7 @@ namespace Gravitas
         #region Methods
 
         // Constructor
-        public Body(string contentManagerName, double mass, bool isStatic, float x, float y)
+        public Planet(string contentManagerName, double mass, bool isStatic, float x, float y)
         {
             // Set the ContentManagerName and call Initialize:
             mContentManagerName = contentManagerName;
