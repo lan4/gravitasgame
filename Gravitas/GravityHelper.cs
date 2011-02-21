@@ -26,7 +26,7 @@ namespace Gravitas
          * Then, it calculates the freefall acceleration of the Player and  *
          * returns it. It only returns the magnitude of the gravity, not    *
          * direction.                                                       */
-        public Vector3 calcGravity(Body body, Player character)
+        public Vector3 calcGravity(Planet body, Player character)
         {
             float radius;
 

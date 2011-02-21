@@ -6,15 +6,15 @@
       <TargetPlatform>Windows</TargetPlatform>
       <BuildConfiguration>Debug</BuildConfiguration>
       <CompressContent>false</CompressContent>
-      <RootDirectory>C:\Users\Nathan\Desktop\Gravitas\Gravitas\Content\</RootDirectory>
-      <LoggerRootDirectory>C:\Users\Nathan\Desktop\Gravitas\Gravitas\</LoggerRootDirectory>
-      <IntermediateDirectory>C:\Users\Nathan\Desktop\Gravitas\Gravitas\Content\obj\x86\Debug\</IntermediateDirectory>
-      <OutputDirectory>C:\Users\Nathan\Desktop\Gravitas\Gravitas\bin\x86\Debug\Content\</OutputDirectory>
+      <RootDirectory>C:\Users\Alex\Documents\Game Making\Gravitas\Gravitas\Content\</RootDirectory>
+      <LoggerRootDirectory>C:\Users\Alex\Documents\Game Making\Gravitas\Gravitas\</LoggerRootDirectory>
+      <IntermediateDirectory>C:\Users\Alex\Documents\Game Making\Gravitas\Gravitas\Content\obj\x86\Debug\</IntermediateDirectory>
+      <OutputDirectory>C:\Users\Alex\Documents\Game Making\Gravitas\Gravitas\bin\x86\Debug\Content\</OutputDirectory>
     </Settings>
     <Assemblies>
       <Assembly>
         <Key>C:\Windows\assembly\GAC_32\Microsoft.Xna.Framework.Content.Pipeline\3.1.0.0__6d5c3888ef60e27d\Microsoft.Xna.Framework.Content.Pipeline.dll</Key>
-        <Value>2010-03-12T21:22:00.6177911-05:00</Value>
+        <Value>2010-06-03T15:28:58.886007-04:00</Value>
       </Assembly>
     </Assemblies>
   </Asset>

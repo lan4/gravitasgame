@@ -11,7 +11,7 @@ namespace Gravitas.Screens
 {
     public class GameScreen : Screen
     {
-        private List<Body> bodyList;
+        private List<Planet> planetList;
         private Player player1;
 
         private const float GRAVITY_CONSTANT = 25.0f;
@@ -36,10 +36,10 @@ namespace Gravitas.Screens
             // Set the screen up here instead of in the Constructor to avoid
             // exceptions occurring during the constructor.
 
-            bodyList = new List<Body>();
+            planetList = new List<Planet>();
             player1 = new Player("global", 10.0f);
 
-            InitializeBodyList();
+            InitializePlanetList();
 
             // AddToManagers should be called LAST in this method:
             if (addToManagers)
@@ -48,10 +48,10 @@ namespace Gravitas.Screens
             }
         }
 
-        private void InitializeBodyList()
+        private void InitializePlanetList()
         {
-            bodyList.Add(new Body("global", 20.0f, true, 10.0f, 3.0f));
-            //bodyList.Add(new Body("global", 40.0f, true, -2.0f, -2.0f));
+            planetList.Add(new Planet("global", 20.0f, true, 10.0f, 3.0f));
+            //planetList.Add(new Body("global", 40.0f, true, -2.0f, -2.0f));
         }
 
         public override void AddToManagers()
@@ -82,7 +82,7 @@ namespace Gravitas.Screens
             //else
             //    F = new Vector3(0, 0, 0);
 
-            foreach (Body element in bodyList)
+            foreach (Planet element in planetList)
             {
                 Vector3 R = (element.Position - player1.Position);
                 R.Normalize();
@@ -100,7 +100,7 @@ namespace Gravitas.Screens
         {
             player1.IsOnGround = false;
 
-            foreach (Body element in bodyList)
+            foreach (Planet element in planetList)
             {
                 player1.Collision.CollideAgainstBounce(element.Collision, 0.0f, (float)element.Mass, 0.0f);
 
@@ -111,13 +111,13 @@ namespace Gravitas.Screens
             }
         }
 
-        public Body FindClosestBody(Vector3 position)
+        public Planet FindClosestBody(Vector3 position)
         {
-            Body closest = bodyList.ElementAt<Body>(0);
+            Planet closest = planetList.ElementAt<Planet>(0);
             float dist_closest = Vector3.DistanceSquared(position, closest.Position);
             float dist_current;
 
-            foreach (Body element in bodyList)
+            foreach (Planet element in planetList)
             {
                 dist_current = Vector3.DistanceSquared(position, element.Position);
                 if (dist_current < dist_closest)
@@ -134,7 +134,7 @@ namespace Gravitas.Screens
         {
             base.Destroy();
 
-            bodyList.Clear();
+            planetList.Clear();
 
 
         }
