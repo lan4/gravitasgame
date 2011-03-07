@@ -11,6 +11,11 @@ using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Net;
 using Microsoft.Xna.Framework.Storage;
 using FlatRedBall;
+using FlatRedBall.Math.Geometry;
+using FarseerGames.FarseerPhysics;
+using FarseerGames.FarseerPhysics.Dynamics;
+using FarseerGames.FarseerPhysics.Collisions;
+using FarseerGames.FarseerPhysics.Factories;
 
 namespace Gravitas
 {
@@ -34,6 +39,8 @@ namespace Gravitas
         /// related content.  Calling base.Initialize will enumerate through any components
         /// and initialize them as well.
         /// </summary>
+        /// 
+
         protected override void Initialize()
         {
             FlatRedBallServices.InitializeFlatRedBall(this, graphics);
@@ -46,7 +53,7 @@ namespace Gravitas
 
 
             //SpriteManager.AddSprite("redball.bmp");
-
+ 
 
 
             base.Initialize();

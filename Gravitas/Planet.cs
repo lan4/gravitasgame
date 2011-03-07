@@ -5,7 +5,13 @@ using System.Text;
 using FlatRedBall;
 using FlatRedBall.Graphics;
 using FlatRedBall.Math.Geometry;
+using FlatRedBall.Input;
+using FarseerGames.FarseerPhysics;
+using FarseerGames.FarseerPhysics.Dynamics;
+using FarseerGames.FarseerPhysics.Collisions;
+using FarseerGames.FarseerPhysics.Factories;
 
+using Microsoft.Xna;
 using Microsoft.Xna.Framework;
 
 
@@ -21,10 +27,9 @@ namespace Gravitas
     {
         #region Fields
 
-        // Here you'd define things that your Entity contains, like Sprites
-        // or Circles:
-        // private Sprite mVisibleRepresentation;
-        // private Circle mCollision;
+        private Body mBody;
+        private Geom mGeom;
+
         private Sprite mVisibleRepresentation;
         private Circle mCollision;
 
@@ -85,6 +90,15 @@ namespace Gravitas
             // Here you can preload any content you will be using
             // like .scnx files or texture files.
 
+            //Initializes the body at the point given in the constructor.
+            mBody = BodyFactory.Instance.CreateBody(Screens.GameScreen.PhysicsSim, 1, 1000);
+            mBody.Position = new Microsoft.Xna.Framework.Vector2(this.Position.X, this.Position.Y);
+            mBody.Rotation = 0.1f;
+            mBody.IsStatic = true;
+            mGeom = GeomFactory.Instance.CreateCircleGeom(mBody, 40, 360);
+            mGeom.RestitutionCoefficient = 1;
+            Screens.GameScreen.PhysicsSim.Add(mBody);
+
             if (addToManagers)
             {
                 AddToManagers(null);
@@ -113,6 +127,9 @@ namespace Gravitas
         public virtual void Activity()
         {
             // This code should do things like set Animations, respond to input, and so on.
+            mCollision.X = mBody.Position.X;
+            mCollision.Y = mBody.Position.Y;
+
         }
 
         public virtual void Destroy()

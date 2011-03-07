@@ -4,6 +4,11 @@ using System.Linq;
 using System.Text;
 
 using FlatRedBall;
+using FlatRedBall.Math.Geometry;
+using FarseerGames.FarseerPhysics;
+using FarseerGames.FarseerPhysics.Dynamics;
+using FarseerGames.FarseerPhysics.Collisions;
+using FarseerGames.FarseerPhysics.Factories;
 
 using Microsoft.Xna.Framework;
 
@@ -13,6 +18,7 @@ namespace Gravitas.Screens
     {
         private List<Planet> planetList;
         private Player player1;
+        public static PhysicsSimulator PhysicsSim;
 
         private const float GRAVITY_CONSTANT = 25.0f;
 
@@ -35,6 +41,8 @@ namespace Gravitas.Screens
         {
             // Set the screen up here instead of in the Constructor to avoid
             // exceptions occurring during the constructor.
+            float gravity = -4;
+            PhysicsSim = new PhysicsSimulator(new Microsoft.Xna.Framework.Vector2(0, gravity));
 
             planetList = new List<Planet>();
             player1 = new Player("global", 10.0f);
@@ -71,6 +79,9 @@ namespace Gravitas.Screens
             Gravitation();
             player1.Activity();
             player1.RotateToward(FindClosestBody(player1.Position));
+
+            PhysicsSim.Update(TimeManager.SecondDifference);
+
             CheckCollisions();
         }
 
