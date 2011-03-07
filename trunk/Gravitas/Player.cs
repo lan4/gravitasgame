@@ -6,6 +6,10 @@ using FlatRedBall;
 using FlatRedBall.Graphics;
 using FlatRedBall.Math.Geometry;
 using FlatRedBall.Input;
+using FarseerGames.FarseerPhysics;
+using FarseerGames.FarseerPhysics.Dynamics;
+using FarseerGames.FarseerPhysics.Collisions;
+using FarseerGames.FarseerPhysics.Factories;
 
 using Microsoft.Xna;
 using Microsoft.Xna.Framework;
@@ -23,15 +27,11 @@ namespace Gravitas
     {
         #region Fields
 
-        // Here you'd define things that your Entity contains, like Sprites
-        // or Circles:
-        // private Sprite mVisibleRepresentation;
-        // private Circle mCollision;
         private Sprite mVisibleRepresentation;
         private Circle mCollision;
 
-        private Text velocityText;
-        private Text accelerationText;
+        private Body mBody;
+        private Geom mGeom;
 
         private double mStartTime;
 
@@ -167,6 +167,11 @@ namespace Gravitas
             mBottom.RelativePosition.X = -1.0f;
             mBottom.Radius = 0.1f;
 
+            //Farseer Body of Player
+            mBody = BodyFactory.Instance.CreateBody(Screens.GameScreen.PhysicsSim, 1, 1);
+            mGeom = GeomFactory.Instance.CreateCircleGeom(Screens.GameScreen.PhysicsSim, mBody, 1, 12);
+            mGeom.RestitutionCoefficient = 1;
+
             SpriteManager.Camera.AttachTo(this, false);
             SpriteManager.Camera.RelativePosition.Z = 30.0f;
 
@@ -192,6 +197,9 @@ namespace Gravitas
             DisplayVector();
 
             HandleInput();
+
+            mVisibleRepresentation.X = mBody.Position.X;
+            mVisibleRepresentation.Y = mBody.Position.Y;
 
             if (mStartTime - TimeManager.CurrentTime >= JUMP_TIME && mBottomDisabled)
             {
