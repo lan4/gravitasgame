@@ -1,0 +1,11 @@
+C:\Users\Alex\Documents\Game Making\GravitasN\GravitasN\bin\x86\Debug\redball.BMP
+C:\Users\Alex\Documents\Game Making\GravitasN\GravitasN\bin\x86\Debug\GravitasN.exe
+C:\Users\Alex\Documents\Game Making\GravitasN\GravitasN\bin\x86\Debug\GravitasN.pdb
+C:\Users\Alex\Documents\Game Making\GravitasN\GravitasN\bin\x86\Debug\FarseerPhysics.dll
+C:\Users\Alex\Documents\Game Making\GravitasN\GravitasN\bin\x86\Debug\FlatRedBall.dll
+C:\Users\Alex\Documents\Game Making\GravitasN\GravitasN\bin\x86\Debug\FarseerPhysics.pdb
+C:\Users\Alex\Documents\Game Making\GravitasN\GravitasN\bin\x86\Debug\FlatRedBall.xml
+C:\Users\Alex\Documents\Game Making\GravitasN\GravitasN\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Alex\Documents\Game Making\GravitasN\GravitasN\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Users\Alex\Documents\Game Making\GravitasN\GravitasN\obj\x86\Debug\GravitasN.exe
+C:\Users\Alex\Documents\Game Making\GravitasN\GravitasN\obj\x86\Debug\GravitasN.pdb
