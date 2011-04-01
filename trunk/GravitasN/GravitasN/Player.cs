@@ -55,6 +55,8 @@ namespace GravitasN
             set { mIsJumping = value; }
         }
 
+        private Line mDirection;
+
         // Keep the ContentManager for easy access:
         string mContentManagerName;
 
@@ -112,9 +114,13 @@ namespace GravitasN
             mCollision = ShapeManager.AddCircle();
             mCollision.AttachTo(this, false);
 
+            mDirection = ShapeManager.AddLine();
+            mDirection.AttachTo(this, false);
+
             //Farseer Body of Player
             mBody = BodyFactory.Instance.CreateCircleBody(Game1.PhysicsSim, 1.0f, mMass);
-            mGeom = GeomFactory.Instance.CreateCircleGeom(Game1.PhysicsSim, mBody, 1, 12);
+            mBody.LinearDragCoefficient = 0.2f;   
+            mGeom = GeomFactory.Instance.CreateCircleGeom(Game1.PhysicsSim, mBody, 1, 50);
             mGeom.RestitutionCoefficient = 0;
 
             SpriteManager.Camera.AttachTo(this, false);
@@ -128,10 +134,53 @@ namespace GravitasN
         {
             // This code should do things like set Animations, respond to input, and so on.
 
-            //HandleInput();
+            
+            HandleInput();
 
             this.X = mBody.Position.X;
             this.Y = mBody.Position.Y;
+        }
+
+        private Planet FindClosestPlanet(List<Planet> planetList)
+        {
+            Planet closestPlanet = null;
+            float newDistance = -1.0f;
+            float curDistance = -1.0f;
+
+            foreach (Planet aPlanet in planetList)
+            {
+                if (closestPlanet == null)
+                {
+                    closestPlanet = aPlanet;
+
+                    curDistance = this.Position.LengthSquared() - closestPlanet.Position.LengthSquared();
+                }
+
+                newDistance = this.Position.LengthSquared() - aPlanet.Position.LengthSquared();
+
+                if (newDistance < curDistance)
+                {
+                    closestPlanet = aPlanet;
+
+                    curDistance = this.Position.LengthSquared() - closestPlanet.Position.LengthSquared();
+                }
+            }
+
+            return closestPlanet;
+        }
+
+        private Vector2 CalculateDirection()
+        {
+            Vector3 zDir = new Vector3(0, 0, 2.0f);
+            Vector3 towardPlanet = Vector3.Subtract(new Vector3(5.0f, 5.0f, 0), this.Position);
+            towardPlanet.Normalize();
+            towardPlanet = Vector3.Multiply(towardPlanet, 2.0f);
+
+            Vector3 finalDirection = Vector3.Cross(towardPlanet, zDir);
+
+            Vector2 finalDir = new Vector2(finalDirection.X, finalDirection.Y);
+
+            return finalDir;
         }
 
         private void HandleInput()
@@ -141,14 +190,12 @@ namespace GravitasN
                 if (InputManager.Xbox360GamePads[0].LeftStick.AsDPadDown(Xbox360GamePad.DPadDirection.Left) ||
                     InputManager.Keyboard.KeyDown(Microsoft.Xna.Framework.Input.Keys.A))
                 {
-                    
-                    
-                    mBody.ApplyForce(hForce);
+                    mBody.ApplyForce(CalculateDirection());
                 }
                 else if (InputManager.Xbox360GamePads[0].LeftStick.AsDPadDown(Xbox360GamePad.DPadDirection.Right) ||
                          InputManager.Keyboard.KeyDown(Microsoft.Xna.Framework.Input.Keys.D))
                 {
-
+                    mBody.ApplyForce(Vector2.Negate(CalculateDirection()));
                 }
                 else
                 {
@@ -158,7 +205,14 @@ namespace GravitasN
                 if (InputManager.Xbox360GamePads[0].ButtonPushed(Xbox360GamePad.Button.A) ||
                     InputManager.Keyboard.KeyPushed(Microsoft.Xna.Framework.Input.Keys.Space))
                 {
+                    Vector3 towardPlanet = Vector3.Subtract(new Vector3(5.0f, 5.0f, 0), this.Position);
+                    towardPlanet.Normalize();
+                    towardPlanet = Vector3.Multiply(towardPlanet, 10.0f);
+                    towardPlanet = Vector3.Negate(towardPlanet);
 
+                    Vector2 awayFromPlanet = new Vector2(towardPlanet.X, towardPlanet.Y);
+
+                    mBody.ApplyImpulse(awayFromPlanet);
                 }
 
             //}
