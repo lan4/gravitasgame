@@ -108,8 +108,9 @@ namespace GravitasN
             mBody.Position = new Microsoft.Xna.Framework.Vector2(this.Position.X, this.Position.Y);
             mBody.Rotation = 0.1f;
             mBody.IsStatic = true;
-            mGeom = GeomFactory.Instance.CreateCircleGeom(Game1.PhysicsSim, mBody, 4.0f, 20);
+            mGeom = GeomFactory.Instance.CreateCircleGeom(Game1.PhysicsSim, mBody, 4.0f, 50);
             mGeom.RestitutionCoefficient = 0;
+            mGeom.FrictionCoefficient = 10.0f;
         }
 
 

@@ -31,20 +31,10 @@ namespace GravitasN
         // Test Farseer Objects
         public static PhysicsSimulator PhysicsSim;
         public static GravityController GravityControl;
-        Body mBallBody;
-        Geom mBallGeom;
-        Body mBallBody2;
-        Geom mBallGeom2;
-        Body mPlatformBody;
-        Geom mPlatformGeom;
-
-        // Test FlatRedBall Objects
-        Sprite mBallSprite;
-        Sprite mBallSprite2;
-        Polygon mPlatformPolygon;
 
         Planet mPlanet;
         Player mPlayer;
+        List<Planet> mPlanetList;
 
         public Game1()
         {
@@ -77,12 +67,14 @@ namespace GravitasN
             
             mPlayer = new Player("global", 1.0f);
 
-            mPlanet = new Planet("global", 1, 5.0f, 5.0f, 4.0f);
+            mPlanetList = new List<Planet>();
+
+            mPlanet = new Planet("global", 1.0f, 5.0f, 5.0f, 4.0f);
             List<Body> pointGravList = new List<Body>();
 
             pointGravList.Add(mPlanet.Body);
 
-            GravityControl = ComplexFactory.Instance.CreateGravityController(PhysicsSim, pointGravList, 15.8f, 15.0f);
+            GravityControl = ComplexFactory.Instance.CreateGravityController(PhysicsSim, pointGravList, 50.0f, 15.0f);
             GravityControl.PointList = new List<Vector2>();
             GravityControl.PointList.Add(mPlanet.Body.Position);
 
@@ -90,7 +82,6 @@ namespace GravitasN
 
             base.Initialize();
         }
-
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,
