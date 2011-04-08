@@ -28,14 +28,6 @@ namespace GravitasN
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        // Test Farseer Objects
-        public static PhysicsSimulator PhysicsSim;
-        public static GravityController GravityControl;
-
-        Planet mPlanet;
-        Player mPlayer;
-        List<Planet> mPlanetList;
-
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -56,29 +48,7 @@ namespace GravitasN
             // if using Screens in your project.  If not, or if you don't know what it means,
             // just ignore the following line for now.
             // For more information on Screens see the Screens wiki article on FlatRedBall.com.
-            //Screens.ScreenManager.Start(typeof(GravitasN.Screens.TestScreen).FullName);
-
-
-            // This is the same as setting FlatRedBall acceleration values
-
-            //Initializing Physics Simulator
-            float gravity = 0;
-            PhysicsSim = new PhysicsSimulator(new Microsoft.Xna.Framework.Vector2(0, gravity));
-            
-            mPlayer = new Player("global", 1.0f);
-
-            mPlanetList = new List<Planet>();
-
-            mPlanet = new Planet("global", 1.0f, 5.0f, 5.0f, 4.0f);
-            List<Body> pointGravList = new List<Body>();
-
-            pointGravList.Add(mPlanet.Body);
-
-            GravityControl = ComplexFactory.Instance.CreateGravityController(PhysicsSim, pointGravList, 50.0f, 15.0f);
-            GravityControl.PointList = new List<Vector2>();
-            GravityControl.PointList.Add(mPlanet.Body.Position);
-
-            PhysicsSim.ControllerList.Add(GravityControl);
+            Screens.ScreenManager.Start(typeof(GravitasN.Screens.GameScreen).FullName);
 
             base.Initialize();
         }
@@ -92,15 +62,6 @@ namespace GravitasN
         {
             FlatRedBallServices.Update(gameTime);
             Screens.ScreenManager.Activity();
-            
-            //Farseer test code
-            PhysicsSim.Update(TimeManager.SecondDifference);
-            //mBallSprite.X = mBallBody.Position.X;
-            //mBallSprite.Y = mBallBody.Position.Y;
-
-            mPlayer.Activity();
-
-            mPlanet.Activity();
 
             base.Update(gameTime);
         }
