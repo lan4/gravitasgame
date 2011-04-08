@@ -28,7 +28,12 @@ namespace GravitasN
         private Body mBody;
         private Geom mGeom;
 
+        private Body grappleBody;
+        private Geom grappleGeom;
+        private Sprite grappleSprite;
+
         private LinearSpring planetAttacher;
+        private LinearSpring grappleAttacher;
 
         private Planet onPlanet;
 
@@ -125,12 +130,17 @@ namespace GravitasN
             mDirection.AttachTo(this, false);
 
             //Farseer Body of Player
-            mBody = BodyFactory.Instance.CreateCircleBody(Screens.GameScreen.PhysicsSim, 1.0f, mMass);
-            mBody.LinearDragCoefficient = 0.0f;   
+            mBody = BodyFactory.Instance.CreateCircleBody(Screens.GameScreen.PhysicsSim, 1.0f, mMass);   
             mGeom = GeomFactory.Instance.CreateCircleGeom(Screens.GameScreen.PhysicsSim, mBody, 1, 50);
             mGeom.RestitutionCoefficient = 0;
 
-            //planetAttacher = SpringFactory.Instance.CreateLinearSpring(mBody, Vector2.Zero, mBody, Vector2.One, 3.0f, 1.0f);
+            grappleBody = BodyFactory.Instance.CreateCircleBody(Screens.GameScreen.PhysicsSim, 0.5f, 1.0f);
+            grappleGeom = GeomFactory.Instance.CreateCircleGeom(Screens.GameScreen.PhysicsSim, grappleBody, 0.5f, 25);
+            grappleSprite = SpriteManager.AddSprite("redball.bmp", mContentManagerName);
+            grappleAttacher = SpringFactory.Instance.CreateLinearSpring(mBody, Vector2.Zero, grappleBody, Vector2.Zero, 300.0f, 1.0f);
+
+            grappleGeom.CollisionGroup = 1;
+            mGeom.CollisionGroup = 1;
 
             SpriteManager.Camera.AttachTo(this, false);
             SpriteManager.Camera.RelativePosition.Z = 30.0f;
@@ -153,6 +163,9 @@ namespace GravitasN
 
             this.X = mBody.Position.X;
             this.Y = mBody.Position.Y;
+
+            grappleSprite.X = grappleGeom.Position.X;
+            grappleSprite.Y = grappleGeom.Position.Y;
         }
 
         private void AttachToPlanet()
@@ -193,7 +206,8 @@ namespace GravitasN
             return closestPlanet;
         }
 
-        private Vector2 CalculateDirection()
+        //Calculates the tangential direction to closest planet
+        private Vector2 CalculateTangent()
         {
             Vector3 zDir = new Vector3(0, 0, 2.0f);
             Vector3 towardPlanet = Vector3.Subtract(new Vector3(onPlanet.Body.Position, 0.0f), this.Position);
@@ -204,7 +218,7 @@ namespace GravitasN
 
             Vector2 finalDir = new Vector2(finalDirection.X, finalDirection.Y);
 
-            return finalDir;
+            return Vector2.Multiply(finalDir, 10.0f);
         }
 
         private void HandleInput()
@@ -214,12 +228,12 @@ namespace GravitasN
                 if (InputManager.Xbox360GamePads[0].LeftStick.AsDPadDown(Xbox360GamePad.DPadDirection.Left) ||
                     InputManager.Keyboard.KeyDown(Microsoft.Xna.Framework.Input.Keys.A))
                 {
-                    mBody.ApplyForce(CalculateDirection());
+                    mBody.ApplyForce(CalculateTangent());
                 }
                 else if (InputManager.Xbox360GamePads[0].LeftStick.AsDPadDown(Xbox360GamePad.DPadDirection.Right) ||
                          InputManager.Keyboard.KeyDown(Microsoft.Xna.Framework.Input.Keys.D))
                 {
-                    mBody.ApplyForce(Vector2.Negate(CalculateDirection()));
+                    mBody.ApplyForce(Vector2.Negate(CalculateTangent()));
                 }
                 else
                 {
