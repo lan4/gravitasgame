@@ -10,6 +10,7 @@ using FarseerGames.FarseerPhysics;
 using FarseerGames.FarseerPhysics.Dynamics;
 using FarseerGames.FarseerPhysics.Collisions;
 using FarseerGames.FarseerPhysics.Factories;
+using FarseerGames.FarseerPhysics.Dynamics.Springs;
 
 using Microsoft.Xna;
 using Microsoft.Xna.Framework;
@@ -26,6 +27,10 @@ namespace GravitasN
 
         private Body mBody;
         private Geom mGeom;
+
+        private LinearSpring planetAttacher;
+
+        private Planet onPlanet;
 
         public Circle Collision
         {
@@ -84,6 +89,8 @@ namespace GravitasN
             mContentManagerName = contentManagerName;
             mMass = mass;
 
+            onPlanet = null;
+
             // If you don't want to add to managers, make an overriding constructor
             Initialize(true);
         }
@@ -118,10 +125,12 @@ namespace GravitasN
             mDirection.AttachTo(this, false);
 
             //Farseer Body of Player
-            mBody = BodyFactory.Instance.CreateCircleBody(Game1.PhysicsSim, 1.0f, mMass);
-            mBody.LinearDragCoefficient = 0.2f;   
-            mGeom = GeomFactory.Instance.CreateCircleGeom(Game1.PhysicsSim, mBody, 1, 50);
+            mBody = BodyFactory.Instance.CreateCircleBody(Screens.GameScreen.PhysicsSim, 1.0f, mMass);
+            mBody.LinearDragCoefficient = 0.0f;   
+            mGeom = GeomFactory.Instance.CreateCircleGeom(Screens.GameScreen.PhysicsSim, mBody, 1, 50);
             mGeom.RestitutionCoefficient = 0;
+
+            //planetAttacher = SpringFactory.Instance.CreateLinearSpring(mBody, Vector2.Zero, mBody, Vector2.One, 3.0f, 1.0f);
 
             SpriteManager.Camera.AttachTo(this, false);
             SpriteManager.Camera.RelativePosition.Z = 30.0f;
@@ -133,12 +142,27 @@ namespace GravitasN
         public virtual void Activity()
         {
             // This code should do things like set Animations, respond to input, and so on.
+            onPlanet = FindClosestPlanet(Screens.GameScreen.PlanetList);
 
-            
+            mIsOnGround = mGeom.Collide(onPlanet.Geometry);
+
+            if (mIsOnGround)
+                AttachToPlanet();
+
             HandleInput();
 
             this.X = mBody.Position.X;
             this.Y = mBody.Position.Y;
+        }
+
+        private void AttachToPlanet()
+        {
+            if (planetAttacher == null)
+            {
+                planetAttacher = SpringFactory.Instance.CreateLinearSpring(mBody, Vector2.Zero, onPlanet.Body, Vector2.Zero, 300.0f, 1.0f);
+            }
+            
+            planetAttacher.Body2 = onPlanet.Body;
         }
 
         private Planet FindClosestPlanet(List<Planet> planetList)
@@ -153,16 +177,16 @@ namespace GravitasN
                 {
                     closestPlanet = aPlanet;
 
-                    curDistance = this.Position.LengthSquared() - closestPlanet.Position.LengthSquared();
+                    curDistance = (float)Math.Sqrt(Math.Pow(mBody.Position.X - closestPlanet.Body.Position.X, 2.0f) + Math.Pow(mBody.Position.Y - closestPlanet.Body.Position.Y, 2.0f));
                 }
 
-                newDistance = this.Position.LengthSquared() - aPlanet.Position.LengthSquared();
+                newDistance = (float)Math.Sqrt(Math.Pow(mBody.Position.X - aPlanet.Body.Position.X, 2.0f) + Math.Pow(mBody.Position.Y - aPlanet.Body.Position.Y, 2.0f));
 
                 if (newDistance < curDistance)
                 {
                     closestPlanet = aPlanet;
 
-                    curDistance = this.Position.LengthSquared() - closestPlanet.Position.LengthSquared();
+                    curDistance = (float)Math.Sqrt(Math.Pow(mBody.Position.X - closestPlanet.Body.Position.X, 2.0f) + Math.Pow(mBody.Position.Y - closestPlanet.Body.Position.Y, 2.0f));
                 }
             }
 
@@ -172,7 +196,7 @@ namespace GravitasN
         private Vector2 CalculateDirection()
         {
             Vector3 zDir = new Vector3(0, 0, 2.0f);
-            Vector3 towardPlanet = Vector3.Subtract(new Vector3(5.0f, 5.0f, 0), this.Position);
+            Vector3 towardPlanet = Vector3.Subtract(new Vector3(onPlanet.Body.Position, 0.0f), this.Position);
             towardPlanet.Normalize();
             towardPlanet = Vector3.Multiply(towardPlanet, 2.0f);
 
@@ -185,8 +209,8 @@ namespace GravitasN
 
         private void HandleInput()
         {
-            //if (mIsOnGround)
-            //{
+            if (mIsOnGround)
+            {
                 if (InputManager.Xbox360GamePads[0].LeftStick.AsDPadDown(Xbox360GamePad.DPadDirection.Left) ||
                     InputManager.Keyboard.KeyDown(Microsoft.Xna.Framework.Input.Keys.A))
                 {
@@ -205,7 +229,7 @@ namespace GravitasN
                 if (InputManager.Xbox360GamePads[0].ButtonPushed(Xbox360GamePad.Button.A) ||
                     InputManager.Keyboard.KeyPushed(Microsoft.Xna.Framework.Input.Keys.Space))
                 {
-                    Vector3 towardPlanet = Vector3.Subtract(new Vector3(5.0f, 5.0f, 0), this.Position);
+                    Vector3 towardPlanet = Vector3.Subtract(new Vector3(onPlanet.Body.Position, 0.0f), this.Position);
                     towardPlanet.Normalize();
                     towardPlanet = Vector3.Multiply(towardPlanet, 10.0f);
                     towardPlanet = Vector3.Negate(towardPlanet);
@@ -215,7 +239,7 @@ namespace GravitasN
                     mBody.ApplyImpulse(awayFromPlanet);
                 }
 
-            //}
+            }
 
             if (InputManager.Xbox360GamePads[0].ButtonDown(Xbox360GamePad.Button.LeftTrigger) ||
                 InputManager.Keyboard.KeyDown(Microsoft.Xna.Framework.Input.Keys.Up))

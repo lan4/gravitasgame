@@ -10,6 +10,7 @@ using FarseerGames.FarseerPhysics;
 using FarseerGames.FarseerPhysics.Dynamics;
 using FarseerGames.FarseerPhysics.Collisions;
 using FarseerGames.FarseerPhysics.Factories;
+using FarseerGames.FarseerPhysics.Controllers;
 
 using Microsoft.Xna;
 using Microsoft.Xna.Framework;
@@ -24,7 +25,18 @@ namespace GravitasN
         private Body mBody;
         private Geom mGeom;
 
+        public Geom Geometry
+        {
+            get { return mGeom; }
+        }
+
         private Sprite mVisibleRepresentation;
+
+        public Sprite VisibleRepresentation
+        {
+            get { return mVisibleRepresentation; }
+        }
+
         private Circle mCollision;
 
         public Circle Collision
@@ -65,7 +77,7 @@ namespace GravitasN
         #region Methods
 
         // Constructor
-        public Planet(string contentManagerName, float mass, float x, float y, float radius)
+        public Planet(string contentManagerName, float mass, float x, float y, float radius, GravityController gravCont)
         {
             // Set the ContentManagerName and call Initialize:
             mContentManagerName = contentManagerName;
@@ -74,6 +86,9 @@ namespace GravitasN
 
             // If you don't want to add to managers, make an overriding constructor
             Initialize(true);
+
+            gravCont.BodyList.Add(mBody);
+            gravCont.PointList.Add(mBody.Position);
         }
 
         protected virtual void Initialize(bool addToManagers)
@@ -104,13 +119,13 @@ namespace GravitasN
             mCollision.Radius = 4.0f;
 
             //Initializes the body at the point given in the constructor.
-            mBody = BodyFactory.Instance.CreateCircleBody(Game1.PhysicsSim, 4.0f, mMass);
+            mBody = BodyFactory.Instance.CreateCircleBody(Screens.GameScreen.PhysicsSim, 4.0f, mMass);
             mBody.Position = new Microsoft.Xna.Framework.Vector2(this.Position.X, this.Position.Y);
             mBody.Rotation = 0.1f;
             mBody.IsStatic = true;
-            mGeom = GeomFactory.Instance.CreateCircleGeom(Game1.PhysicsSim, mBody, 4.0f, 50);
+            mGeom = GeomFactory.Instance.CreateCircleGeom(Screens.GameScreen.PhysicsSim, mBody, 4.0f, 50);
             mGeom.RestitutionCoefficient = 0;
-            mGeom.FrictionCoefficient = 10.0f;
+            mGeom.FrictionCoefficient = 100.0f;
         }
 
 
